@@ -1,0 +1,24 @@
+go into deployments folder
+kubectl apply -f .
+
+then go into statefulsets folder
+kubectl apply -f .
+
+get inside the mongo-0 pod
+kubectl exec -it mongo-0 -- mongo
+
+do these commands
+rs.initiate()
+var cfg = rs.conf()
+cfg.members[0].host="mongo-0.mongo:27017"
+rs.reconfig(cfg)
+rs.add("mongo-1.mongo:27017")
+rs.add("mongo-2.mongo:27017")
+rs.status()
+
+Dive into the cluster
+kubectl run diver --rm -it --restart=Never --image=mongo -- sh
+
+Expose a specific pod
+kubectl expose pod mongo-0 --port 7000 --target-port 27017 --type LoadBalancer
+

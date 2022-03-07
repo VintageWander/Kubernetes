@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+    spec:
+      containers:
+        - name: node-app
+          image: vintagewander/simple-node-express-app:aarch64
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: node-env
+                  key: PORT
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: node-env
+                  key: HOST
+            - name: TEST
+              valueFrom:
+                configMapKeyRef:
+                  name: node-env
+                  key: TEST
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: node-db-uri
+                  key: MONGODB_URI
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5000
